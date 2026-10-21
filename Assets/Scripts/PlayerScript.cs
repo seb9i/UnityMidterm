@@ -1,0 +1,155 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+
+public class PlayerScript : MonoBehaviour
+{
+    //These are the player's Variables, the raw info that defines them
+    
+    //The Rigidbody2D is a component that gives the player physics, and is what we use to move
+    public Rigidbody2D RB;
+
+    //TextMeshPro is a component that draws text on the screen.
+    //We use this one to show our score.
+    public TextMeshPro ScoreText;
+	
+	public TextMeshPro HealthText;
+    
+    //This will control how fast the player moves
+    public float Speed = 4.8f;
+    
+    //This is how many points we currently have
+    public int Score = 0;
+	
+	public int Health = 1;
+	
+	public float dashTimer = 0f;
+	
+	public float dashReset = 2f;
+	
+    
+    //Start automatically gets triggered once when the objects turns on/the game starts
+    void Start()
+    {
+        //During setup we call UpdateScore to make sure our score text looks correct
+        UpdateScore();
+    }
+
+    //Update is a lot like Start, but it automatically gets triggered once per frame
+    //Most of an object's code will be called from Update--it controls things that happen in real time
+    void Update()
+    {
+        //The code below controls the character's movement
+        //First we make a variable that we'll use to record how we want to move
+        Vector2 vel = new Vector2(0,0);
+		float currentSpeed = 0f;
+        
+        //Then we use if statement to figure out what that variable should look like
+		
+		if (dashTimer <= 2f) {
+			if (Keyboard.current.leftShiftKey.isPressed) {
+				currentSpeed = Speed * 2f;
+				dashTimer += Time.deltaTime;
+		}
+			else {
+				currentSpeed = Speed;
+			}
+		
+		}
+		else {
+			currentSpeed = Speed;
+		}
+		
+		if (dashTimer > 2f)
+		{
+			dashReset -= Time.deltaTime;
+		}
+		
+		
+		if (dashReset <= 0f){
+			dashTimer = 0f;
+			dashReset = 2f;
+		}
+        
+        //If I hold the right arrow key, the player should move right. . .
+        if (Keyboard.current.rightArrowKey.isPressed)
+        {
+            vel.x = 1;
+        }
+        //If I hold the left arrow, the player should move left. . .
+        if (Keyboard.current.leftArrowKey.isPressed)
+        {
+            vel.x = -1;
+        }
+        //If I hold the up arrow, the player should move up. . .
+        if (Keyboard.current.upArrowKey.isPressed)
+        {
+            vel.y = 1;
+        }
+        //If I hold the down arrow, the player should move down. . .
+        if (Keyboard.current.downArrowKey.isPressed)
+        {
+            vel.y = -1;
+        }
+        
+		vel.Normalize();
+        //Finally, I take that variable and I feed it to the component in charge of movement
+        RB.linearVelocity = vel * currentSpeed;
+    }
+
+    //This gets called whenever you bump into another object, like a wall or coin.
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        //This checks to see if the thing you bumped into had the Hazard tag
+        //If it does...
+        if (other.gameObject.CompareTag("Hazard"))
+        {
+            //Run your 'you lose' function!
+			Health--;
+			Debug.Log(Health);
+			
+            if (Health <= 0) {
+				
+				Die();
+				
+			}
+        }
+        
+        //This checks to see if the thing you bumped into has the CoinScript script on it
+        CoinScript coin = other.gameObject.GetComponent<CoinScript>();
+		
+		float playerSize = transform.localScale.x + transform.localScale.y;
+        //If it does, run the code block belows
+        if (coin != null)
+        {
+            //Tell the coin that you bumped into them so they can self destruct or whatever
+            //Make your score variable go up by one. . .
+            Score++;
+			coin.GetBumped();
+			
+            //And then update the game's score text
+            UpdateScore();
+        }
+    }
+
+    //This function updates the game's score text to show how many points you have
+    //Even if your 'score' variable goes up, if you don't update the text the player doesn't know
+    public void UpdateScore()
+    {
+        ScoreText.text = "Score: " + Score;
+    }
+
+    //If this function is called, the player character dies. The game goes to a 'Game Over' screen.
+    public void Die()
+    {
+        SceneManager.LoadScene("Game Over");
+    }
+}
+
+
+
+
