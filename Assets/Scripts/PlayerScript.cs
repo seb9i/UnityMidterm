@@ -106,7 +106,7 @@ public class PlayerScript : MonoBehaviour
     {
         //This checks to see if the thing you bumped into had the Hazard tag
         //If it does...
-        if (other.gameObject.CompareTag("Hazard"))
+        if (other.gameObject.CompareTag("Hazard") || other.gameObject.CompareTag("Bullet"))
         {
             //Run your 'you lose' function!
 			Health--;
@@ -118,6 +118,8 @@ public class PlayerScript : MonoBehaviour
 				
 			}
         }
+		
+		
         
         //This checks to see if the thing you bumped into has the CoinScript script on it
         CoinScript coin = other.gameObject.GetComponent<CoinScript>();

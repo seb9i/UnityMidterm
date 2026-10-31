@@ -18,22 +18,27 @@ public class HazardScript : MonoBehaviour
     void Start()
     {
         myRB = GetComponent<Rigidbody2D>();
-		GameObject spawnedBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-		spawnedBullet.GetComponent<BulletScript>().launchBullet(player.transform.position - transform.position, 0.5f);
     }
+	
+	void spawnBullet(Vector2 direction, float speed){
+		GameObject spawnedBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+		spawnedBullet.name = "Active Bullet";
+		spawnedBullet.GetComponent<BulletScript>().launchBullet(direction, speed);
+	}
 	
 	void FixedUpdate(){
 		time += Time.deltaTime;
 		if (time > delay){
 			time = 0f;
-			playerCoord = player.transform.position;
-			direction = (playerCoord - transform.position);
+			spawnBullet(direction, 4f);
 				
 			
 		}
 		if (myRB.transform.position == playerCoord){
 			playerCoord = player.transform.position;
 		}
+		playerCoord = player.transform.position;
+		direction = (playerCoord - transform.position);
 		myRB.linearVelocity = direction * speed;
 		
 	}

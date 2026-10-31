@@ -28,7 +28,10 @@ public class BulletScript : MonoBehaviour
 		RB.linearVelocity = velocity;
 
         if (Mathf.Abs(transform.position.x) >= xLimit || Mathf.Abs(transform.position.y) >= yLimit){
-			Destroy(gameObject);
+			if (gameObject.name == "Active Bullet"){
+				Destroy(gameObject);
+
+			}
 		}
     }
 }
