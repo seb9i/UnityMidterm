@@ -143,6 +143,32 @@ public class PlayerScript : MonoBehaviour
     public void UpdateScore()
     {
         ScoreText.text = "Score: " + Score;
+        if (RoundManager.currentRound == 1)
+        {
+            if (Score > 4)
+            {
+                SceneManager.LoadScene("Win");
+                RoundManager.currentRound += 1;
+            }
+            
+        }
+        else if (RoundManager.currentRound == 2)
+        {
+            if (Score > 9)
+            {
+                SceneManager.LoadScene("Win");
+                RoundManager.currentRound += 1;
+            }
+        }
+        else if (RoundManager.currentRound == 3)
+        {
+            if (Score > 19)
+            {
+                SceneManager.LoadScene("Win");
+                
+            }
+        }
+        
     }
 
     //If this function is called, the player character dies. The game goes to a 'Game Over' screen.
